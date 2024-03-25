@@ -1,0 +1,27 @@
+<form [formGroup]="eventForm" class="flex between column">
+  <mat-form-field class="filed-wrap">
+    <mat-label>Title</mat-label>
+    <input type="text"
+           matInput
+           formControlName="title"
+           placeholder="Some text">
+  </mat-form-field>
+  <mat-form-field class="filed-wrap">
+    <mat-label>Time</mat-label>
+    <input type="time"
+           matInput
+           formControlName="time">
+  </mat-form-field>
+
+  <button mat-raised-button color="primary"
+          [disabled]="isDisabledSubmitBtn"
+          (click)="submitForm()">
+    Save
+  </button>
+  <button mat-raised-button color="warn"
+          *ngIf="isDeletable?.isAllowed"
+          [disabled]="isDisabledSubmitBtn"
+          (click)="deleteEvent()">
+    Delete
+  </button>
+</form>

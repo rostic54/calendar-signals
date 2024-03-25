@@ -1,0 +1,17 @@
+<div class="page-wrap flex align-center center">
+  <div class="calendar-wrap">
+    <ng-container>
+    <app-year
+      [currentYear]="currentDate().getFullYear()"
+      (yearBack)="setPreviousYear()"
+      (yearNext)="setNextYear()">
+    </app-year>
+    <app-month [activeMonth]="activeMonth()"
+                    [days]="days()"
+                    (setNextMonth)="setNextMonth()"
+                    (setPreviousMonth)="setPreviousMonth()"
+                    (updateStore)="updateDaysStore($event)">
+    </app-month>
+    </ng-container>
+  </div>
+</div>

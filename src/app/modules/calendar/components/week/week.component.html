@@ -1,0 +1,41 @@
+<div class="container">
+
+  <thead>
+  <tr>
+    <th *ngFor="let day of week">
+      {{ day }}
+    </th>
+  </tr>
+  </thead>
+  <tbody cdkDropListGroup>
+  <tr *ngFor="let row of days | weekSeparator : 7; let i = index">
+    <td class="calendar-day"
+        *ngFor="let cell of row; let j = index"
+        [ngClass]="{'weekend': j > 4, 'beyond': !cell.isCurrentMonth}"
+        cdkDropList
+        cdkDropListSortingDisabled
+        (cdkDropListDropped)="drop($event)"
+        [cdkDropListData]="row[j].events"
+        (cdkDropListEntered)="entered($event, cell)"
+        (cdkDropListExited)="exited($event, cell)"
+        (click)="openDayDetails(i, j)"
+    >
+      <div class="calendar-day-header">
+        <strong>{{ cell.currentDate }}</strong>
+        <div class="events-dox">
+          @for(ev of cell.events; track ev.id ; let x = $index; let l = $count){
+          <app-event-brief-info
+            class="event-item"
+            [ngStyle]="{'top': (x+1) * 15 + 'px', 'z-index': l - x }"
+            cdkDrag
+            cdkDragHandle
+            [event]="ev"
+          >
+          </app-event-brief-info>
+          }
+        </div>
+      </div>
+    </td>
+  </tr>
+  </tbody>
+</div>

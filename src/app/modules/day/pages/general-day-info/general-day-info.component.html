@@ -1,0 +1,20 @@
+<div class="content-wrap">
+  <h3>Select an appointment to edit: </h3>
+
+  <app-event-create-form
+    [eventDetails]="eventDetails"
+    [date]="currentDayInfo().date"
+    [isDeletable]="isDeletable"
+    (submitFormValue)="updateEvent($event)"
+    (deleteItem)="deleteEvent($event)"
+  ></app-event-create-form>
+  <p class="tip">Press the hour row to create an appointment</p>
+  <div class="list">
+    <h4>List Of Events for the Day: </h4>
+    <ul>
+      <li *ngFor="let event of currentDayInfo().events">
+        {{ event.preciseTime }}-{{ event.content }}-->
+      </li>
+    </ul>
+  </div>
+</div>

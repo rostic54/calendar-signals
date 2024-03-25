@@ -1,0 +1,31 @@
+@import "_variables";
+
+.calendar-day {
+  position: relative;
+  text-align: center;
+  cursor: pointer;
+  padding: 50px;
+  border: 1px solid $main-gray;
+  &.weekend {
+    background-color: $light-red;
+  }
+  &.beyond {
+    background-color: $dark-gray;
+  }
+  .events-dox {
+    position: absolute;
+    left: 0;
+    top: 0;
+    cursor: grab;
+  }
+  .event-item {
+    position: absolute;
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 50px;
+    background-color: darkgray;
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 3px 4px 2px gray;
+  }
+}

@@ -1,0 +1,47 @@
+@import "_variables";
+
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  .details-wrap {
+    width: 400px;
+    background-color: $main-background;
+    border-radius: 15px;
+    margin-left: 10px;
+  }
+  .back {
+    margin-bottom: 10px;
+  }
+}
+.viewport {
+  height: 500px;
+  width: 800px;
+  overflow: scroll;
+  border: 1px solid black;
+  .order {
+    padding: 0 40px;
+    font-weight: bold;
+    font-size: 25px;
+    border-right: 2px solid black;
+  }
+}
+
+.item {
+  height: 150px;
+  border-bottom: 2px solid black;
+  &:nth-child(even) {
+    background: darkgray;
+  }
+  &:nth-child(odd) {
+    background: lightgray;
+  }
+  .list {
+    margin: 5px 10px;
+    .content {
+      margin: 5px 10px;
+
+    }
+  }
+}
