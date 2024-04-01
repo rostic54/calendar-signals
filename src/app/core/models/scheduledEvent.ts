@@ -7,7 +7,7 @@ export class ScheduledEvent {
   editable: boolean;
 
   constructor(date: Date, content: string, editable = false, id?: number) {
-    this.id = id || date.getTime();
+    this.id = id || Date.now();
     this.currentDate = date;
     this.content = content;
     this.editable = editable;

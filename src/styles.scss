@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-
+@import "variables";
 
 .main-container {
   vertical-align: center;
@@ -44,6 +44,9 @@
       flex-wrap: wrap;
     }
   }
+}
+.alert {
+  color: $alert;
 }
 
 .btn {

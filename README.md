@@ -10,5 +10,7 @@ In the calendar app you can create appointments for specific dates and time.
 There are several events allowed to do with the appointment:
 
 - Drag & Drop them within the month view, includes days from previous and next month
-- Creat appointments in the day details. Create for specific hour before selected one.
-- Edit appointments by click it on the /general screen 
+- DnD inside of day allows to change the hour of an appointment
+- Creat an appointments by click the 'Create appointment' button in the ride panel of day details
+- Create an appointment with predefined hour before  by click the hour row.
+- Edit appointments by click needed item on the '/general' screen.

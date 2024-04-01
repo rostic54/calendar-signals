@@ -11,7 +11,13 @@ import {
 import {MatButton} from "@angular/material/button";
 import {MatFormField, MatLabel} from "@angular/material/form-field";
 import {MatInput} from "@angular/material/input";
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators
+} from "@angular/forms";
 import {ScheduledEvent} from "../../../../core/models/scheduledEvent";
 import {scheduledEventFactory} from "../../../../core/factories/scheduled-event.factory";
 import {createDateWithSpecifiedTime} from "../../../../core/utils/util";
@@ -42,6 +48,8 @@ export class EventCreateFormComponent implements OnInit, OnChanges, OnDestroy {
   @Output() submitFormValue: EventEmitter<ScheduledEvent> = new EventEmitter<ScheduledEvent>();
   @Output() deleteItem: EventEmitter<number> = new EventEmitter<number>();
   isDisabledSubmitBtn = true;
+  createdEvent: ScheduledEvent | null;
+  lengthOfTitle = 50;
   private destroy$ = new Subject();
 
   eventForm: FormGroup;
@@ -49,6 +57,10 @@ export class EventCreateFormComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private fb: FormBuilder) {
+  }
+
+  get formControlsTitle(): {[key: string]: AbstractControl<string>} {
+    return this.eventForm.controls
   }
 
   ngOnDestroy() {
@@ -66,8 +78,8 @@ export class EventCreateFormComponent implements OnInit, OnChanges, OnDestroy {
       this.setForm(changes['eventDetails'].currentValue);
     } else if (changes['specificHour']?.currentValue.hours) {
       this._validSpecifiedHour = this.specificHour.hours.padStart(2, '0');
-      const eventWithTime = this.createEvent(+changes['specificHour']?.currentValue.hours)
-      this.setForm(eventWithTime);
+      this.createdEvent = this.createNewEvent(+changes['specificHour']?.currentValue.hours)
+      this.setForm(this.createdEvent);
     }
     this.formChangesListening();
   }
@@ -75,9 +87,9 @@ export class EventCreateFormComponent implements OnInit, OnChanges, OnDestroy {
   initForm(): void {
     if (!this.eventForm) {
       this.eventForm = this.fb.group({
-        title: ['', [Validators.required, Validators.max(50)]],
+        title: ['', [Validators.required, Validators.maxLength(this.lengthOfTitle)]],
         time: ['', Validators.required]
-      })
+      }, )
       this.eventForm.disable();
     }
   }
@@ -89,6 +101,7 @@ export class EventCreateFormComponent implements OnInit, OnChanges, OnDestroy {
         time: values.preciseTime
       })
       this.eventForm.enable();
+      this.eventForm.updateValueAndValidity();
     } else {
       this.initForm();
       this.setForm(values);
@@ -99,10 +112,13 @@ export class EventCreateFormComponent implements OnInit, OnChanges, OnDestroy {
     this.isDisabledSubmitBtn = true;
     const formValue = this.eventForm.value;
     const [hours, minutes] = formValue.time.split(':');
-    const newEvent = this.createEvent(hours, minutes, formValue.title);
+    const eventId: number = this.eventDetails?.id || this.createdEvent?.id || Date.now();
+    const isEditable = this.eventDetails?.editable || this.createdEvent?.editable || false;
+    const newEvent = this.createEventFrom(hours, minutes, formValue.title, isEditable, eventId);
     this.submitFormValue.emit(newEvent);
     if(this._validSpecifiedHour) {
       this.eventForm.reset({title: '', time: this._validSpecifiedHour + ':00'});
+      this.createdEvent = null;
     } else {
       this.eventForm.reset(null, {emitEvent: false});
       this.eventForm.disable();
@@ -131,8 +147,11 @@ export class EventCreateFormComponent implements OnInit, OnChanges, OnDestroy {
       })
   }
 
-  private createEvent(hours: number, minutes = 0, content?: string): ScheduledEvent {
-    return scheduledEventFactory(createDateWithSpecifiedTime(this.date, hours, minutes), content);
+  private createNewEvent(hours: number, minutes = 0): ScheduledEvent {
+    return scheduledEventFactory(createDateWithSpecifiedTime(this.date, hours, minutes));
+  }
+  private createEventFrom(hours: number, minutes = 0, content: string, isEditable: boolean, id: number): ScheduledEvent {
+    return scheduledEventFactory(createDateWithSpecifiedTime(this.date, hours, minutes), content, isEditable, id);
   }
 }
 

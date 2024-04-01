@@ -16,8 +16,7 @@
         cdkDropListSortingDisabled
         (cdkDropListDropped)="drop($event)"
         [cdkDropListData]="row[j].events"
-        (cdkDropListEntered)="entered($event, cell)"
-        (cdkDropListExited)="exited($event, cell)"
+        (cdkDropListEntered)="entered(cell)"
         (click)="openDayDetails(i, j)"
     >
       <div class="calendar-day-header">
@@ -27,8 +26,8 @@
           <app-event-brief-info
             class="event-item"
             [ngStyle]="{'top': (x+1) * 15 + 'px', 'z-index': l - x }"
+            (cdkDragStarted)="exited(cell)"
             cdkDrag
-            cdkDragHandle
             [event]="ev"
           >
           </app-event-brief-info>

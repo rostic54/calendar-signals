@@ -5,7 +5,7 @@ import {Day} from "../models/day.model";
 import {createDateInstance, createDateWithSpecifiedMonthDay, daysInMonth} from "../utils/util";
 import {DAYS_IN_MONTH_VIEW} from "../constants/constants";
 import {Month} from "../models/month.model";
-import {BehaviorSubject} from "rxjs";
+import {BehaviorSubject, Observable} from "rxjs";
 import {DayFactory} from "../factories/day.factory";
 
 @Injectable({
@@ -13,7 +13,6 @@ import {DayFactory} from "../factories/day.factory";
 })
 export class DateManagerService {
   private readonly LAST_VIEWED_DATE = 'lastViewedDate'
-  private readonly STORE_NAME = 'calendarEvents'
   private _currentDate = signal(new Date());
   private _monthDays: WritableSignal<Day[]> = signal([]);
   private _activeMonth: WritableSignal<Month> = signal(new Month(this._currentDate()));
@@ -49,6 +48,7 @@ export class DateManagerService {
   get activeMonth(): Signal<Month> {
     return this._activeMonth.asReadonly()
   }
+
   get selectedDay(): Signal<Day> {
     return this._selectedDay.asReadonly()
   }
@@ -126,8 +126,8 @@ export class DateManagerService {
 
   createEventForParticularDate(event: ScheduledEvent): void {
     const indexOfExistedEvent = this.findIndexEventForCurrentTime(event.id);
-    if(indexOfExistedEvent > -1) {
-      this.selectedDay().events.splice(indexOfExistedEvent, 1 , event);
+    if (indexOfExistedEvent > -1) {
+      this.selectedDay().events.splice(indexOfExistedEvent, 1, event);
     } else {
       this.selectedDay().events = [...this.selectedDay().events, ...[event]];
     }
@@ -135,22 +135,28 @@ export class DateManagerService {
     this.getSelectedDay$.next(this._selectedDay());
   }
 
-  deleteEventFromStore(eventId: number): void {
+  deleteEventFromStore(eventId: number): Observable<boolean> {
     const indexOfExistedEvent = this.findIndexEventForCurrentTime(eventId);
-    if(indexOfExistedEvent > -1) {
-      this.selectedDay().events.splice(indexOfExistedEvent, 1);
-      this.updateStore()
-      this.getSelectedDay$.next(this._selectedDay());
-    }
+    return new Observable(subscriber => {
+      if (indexOfExistedEvent > -1) {
+        this.selectedDay().events.splice(indexOfExistedEvent, 1);
+        this.updateStore()
+        this.getSelectedDay$.next(this._selectedDay());
+        subscriber.next(true);
+      }
+      subscriber.next(false);
+      subscriber.complete();
+    })
   }
 
   private pushDayToMonth(day: Date, monthContainer: Day[], isCurrentMonth = true): void {
     const events = this.getEventsByDate(day.getTime());
     monthContainer.push(DayFactory(day, events, isCurrentMonth));
   }
+
   private updateStore() {
-    const {date, events, isCurrentMonth } = this.selectedDay();
-    const dayModel: Day = DayFactory( date, events, isCurrentMonth);
+    const {date, events, isCurrentMonth} = this.selectedDay();
+    const dayModel: Day = DayFactory(date, events, isCurrentMonth);
     this.updateDaysInStore([dayModel]);
   }
 
